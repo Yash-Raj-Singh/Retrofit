@@ -27,23 +27,40 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, viewmodelFactory).get(MainViewModel::class.java)
 
-        viewModel.getCountryDetail()
+//        viewModel.getCountryDetail()
 
-        viewModel.myResponse.observe(this, Observer { response ->
-            if(response.isSuccessful)
-            {
-                Log.d("RESP", response.body()?.userId.toString())
-                Log.d("RESP", response.body()?.id.toString())
-                Log.d("RESP", response.body()?.title!!)
-                Log.d("RESP", response.body()?.body!!)
-                tvText.text = response.body()?.title!!
-            }
-            else
-            {
-                Log.d("RESP", response.errorBody().toString())
-                tvText.text = response.code().toString()
-            }
-        })
+        val options : HashMap<String, String> = HashMap()
+        options["_sort"] = "id"
+        options["_order"] = "desc"
+
+        btnNumInput.setOnClickListener{
+            val number: Int = Integer.parseInt(etNumber.text.toString())
+            viewModel.getCustomPost2(number, options)
+
+            viewModel.myResponse4.observe(this, Observer { response ->
+                if(response.isSuccessful)
+                {
+                    tvText.text = response.body().toString()
+
+                    response.body()?.forEach{
+                        Log.d("RESP", it.userId.toString())
+                        Log.d("RESP", it.id.toString())
+                        Log.d("RESP", it.title)
+                        Log.d("RESP", it.body)
+                        Log.d("RESP", "--------------------")
+                    }
+
+
+
+                }
+                else
+                {
+                    Log.d("RESP", response.errorBody().toString())
+                    tvText.text = response.code().toString()
+                }
+            })
+
+        }
 
     }
 }
